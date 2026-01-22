@@ -1,0 +1,23 @@
+name: Checks
+
+on: [push, pull_request]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build
+        run: docker compose build
+
+      - name: Test
+        run: docker compose run --rm app sh -c "python manage.py test"
+
+      - name: Lint
+        run: docker compose run --rm app sh -c "flake8"
