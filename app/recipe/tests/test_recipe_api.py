@@ -63,7 +63,7 @@ class PrivateRecipeApiTests(TestCase):
         self.client = APIClient()
         self.user = create_user(
             email="user@example.com",
-            password="testpass123",
+            password="test123",
         )
         self.client.force_authenticate(self.user)
 
@@ -197,10 +197,9 @@ class PrivateRecipeApiTests(TestCase):
         self.assertTrue(Recipe.objects.filter(id=recipe.id).exists())
 
     def test_create_recipe_with_new_tags(self):
-        """Test create a recipe with new tags."""
-
+        """Test creating a recipe with new tags."""
         payload = {
-            "titlt": "Thai Prawn Curry",
+            "title": "Thai Prawn Curry",
             "time_minutes": 30,
             "price": Decimal("2.50"),
             "tags": [{"name": "Thai"}, {"name": "Dinner"}],
@@ -212,12 +211,14 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(recipes.count(), 1)
         recipe = recipes[0]
         self.assertEqual(recipe.tags.count(), 2)
+
         for tag in payload["tags"]:
-            exits = recipe.tags.filter(
+            exists = recipe.tags.filter(
                 name=tag["name"],
                 user=self.user,
             ).exists()
-        self.assertTrue(exits)
+            self.assertTrue(exists)
+
 
     def test_create_recipe_with_exits_tags(self):
         """Test Create a recipe eith existing tag."""
