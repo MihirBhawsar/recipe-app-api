@@ -1,6 +1,9 @@
 #!/bin/sh
 
+set -e
+
 python manage.py wait_for_db
-python manage.py migrate
 python manage.py collectstatic --noinput
-gunicorn app.wsgi:application --bind 0.0.0.0:8000
+python manage.py migrate
+
+uwsgi --socket :9000 --workers 4 --master --enable-threads --module app.wsgi
